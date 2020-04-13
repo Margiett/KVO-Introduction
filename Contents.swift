@@ -25,6 +25,14 @@ import UIKit
 
 //https://medium.com/flawless-app-stories/static-vs-dynamic-dispatch-in-swift-a-decisive-choice-cece1e872d
 
+
+
+// KVO is an example of the observer Pattern
+// An example of the observer Pattern is NSNotificationCenter
+
+// git Use a delegate when there is a "master/child relationship (delegate knows about the class and class knows about the delegate), with one class higher up the control hierarchy, and when it is clear that there won't be situations where other elements (mostly UI) will be interested in knowing what the class has to say.  Use notifications when the class is not interested in knowing who listens and how many they are, anybody and any number can register for the notifications.  KVO is useful to listen "without the class knowing", although of course that's not the case, the class on which KVO is applied does not need to be changed.
+
+
 //Dog class (class being observed) - will have property to be observed
 
 // we also use NSObject for locations calls
@@ -70,14 +78,22 @@ class DogWalker {
 
 class DogGroomer {
     let dog: Dog
-    var birthdayObservation: NSKeyValueObservation
+    var birthdayObservation: NSKeyValueObservation?
     
     init(dog: Dog) {
         self.dog = dog
+        configureBirthdayObservation()
     }
-    private func confirgureBirthdayObservation() {
-        birthdayObservation = dog.observe(\.age, options: [.old, .new], changeHandler: { (dog, change) in
-            <#code#>
+    
+    private func configureBirthdayObservation() {
+      birthdayObservation = dog.observe(\.age, options: [.old, .new], changeHandler: { (dog, change) in
+        
+        // unwrap the newValue property on change as it's optional
+        guard let age = change.newValue else { return }
+        print("Hey \(dog.name), happy \(age) birthday from the dog groomer.")
+        print("groomer oldValue: \(change.oldValue ?? 0)")
+        print("groomer newValue: \(change.newValue ?? 0)\n")
+        
         })
     }
     
